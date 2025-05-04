@@ -1,0 +1,39 @@
+pipeline {
+  agent any
+
+  environment {
+    SERVICE = "final"
+    REPONAME = "forK8S"
+    DOCKERHUB_USERNAME = "muhammadadel8"
+    IMAGE_TAG = "${DOCKERHUB_USERNAME}/${REPONAME}:${BUILD_NUMBER}"
+  }
+
+  stages {
+    stage('Build and Push The Image') {
+      steps {
+        script {
+          docker.build("${IMAGE_TAG}")
+                .push()
+        }
+      }
+    }
+
+    stage('Test') {
+      steps {
+        echo 'Testing...'
+        // Add actual test commands here
+      }
+    }
+
+    stage('Deploy') {
+      steps {
+        script {
+          sh """
+            sed 's|{{ final_image }}|${IMAGE_TAG}|' k8s/deployment.yaml | kubectl apply -f -
+          """
+        }
+      }
+    }
+  }
+}
+
