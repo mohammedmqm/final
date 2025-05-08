@@ -1,39 +1,32 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    SERVICE = "final"
-    REPONAME = "forK8S"
-    DOCKERHUB_USERNAME = "muhammadadel8"
-    IMAGE_TAG = "${DOCKERHUB_USERNAME}/${REPONAME}:${BUILD_NUMBER}"
-  }
+    environment {
+        SERVICE_NAME       = "nginx"
+        ORGANIZATION_NAME  = "mohammedmqm"
+        DOCKERHUB_USERNAME = "mohammedmqm"
+        REPOSITORY_TAG     = "${DOCKERHUB_USERNAME}/${ORGANIZATION_NAME}-${SERVICE_NAME}:${BUILD_ID}"
+    }
 
-  stages {
-    stage('Build and Push The Image') {
-      steps {
-        script {
-          docker.build("${IMAGE_TAG}")
-                .push()
+    stages {
+        stage('Build and Push Image') {
+            steps {
+                script {
+                    docker.withRegistry('', 'docker-hub') {
+                        def image = docker.build(REPOSITORY_TAG)
+                        image.push()
+                    }
+                }
+            }
         }
-      }
-    }
 
-    stage('Test') {
-      steps {
-        echo 'Testing...'
-        // Add actual test commands here
-      }
-    }
-
-    stage('Deploy') {
-      steps {
-        script {
-          sh """
-            sed 's|{{ final_image }}|${IMAGE_TAG}|' k8s/deployment.yaml | kubectl apply -f -
-          """
+        stage('Deploy to Cluster') {
+            steps {
+                sh """
+                    sed 's|REPOSITORY_TAG|${REPOSITORY_TAG}|g' deployment.yaml | kubectl apply -f -
+                """
+            }
         }
-      }
     }
-  }
 }
 
