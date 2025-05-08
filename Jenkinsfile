@@ -16,7 +16,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         // Docker login securely
                         sh """
-                            echo ${P@ssw0rdMqmmqm22} | docker login -u ${mohammedmqm} --password-stdin
+                            echo "P@ssw0rdMqmmqm22" | docker login -u mohammedmqm --password-stdin
                         """
 
                         // Build the Docker image
