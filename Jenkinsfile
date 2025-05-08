@@ -5,7 +5,7 @@ pipeline {
         SERVICE_NAME       = "nginx"
         ORGANIZATION_NAME  = "mohammedmqm"
         DOCKERHUB_USERNAME = "mohammedmqm"
-        REPOSITORY_TAG     = "${DOCKERHUB_USERNAME}/${ORGANIZATION_NAME}-${SERVICE_NAME}:${BUILD_ID}"
+        REPOSITORY_TAG     = "$mohammedmqm/${ORGANIZATION_NAME}-${SERVICE_NAME}:${BUILD_ID}"
     }
 
     stages {
