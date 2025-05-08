@@ -1,3 +1,3 @@
-from alpine: latest
-run apk update && apk add apache2
-cmd httpd -D FOREGROUND
+FROM alpine:latest
+RUN apk update && apk add apache2
+CMD httpd -D FOREGROUND
